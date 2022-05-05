@@ -988,6 +988,19 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
                     ara_req_d.conversion_vs1 = OpQueueReductionZExt;
                     ara_req_d.cvt_resize     = resize_e'(2'b10);
                   end
+                  6'b010000: begin // VWXUNARY0
+                    // These instructions do not use vs1
+                    ara_req_d.use_vs1       = 1'b0;
+                    case (insn.varith_type.rs1)
+                      5'b10001: begin
+                        ara_req_d.op        = ara_pkg::VFIRST;
+                      end
+                      5'b10000: begin
+                        ara_req_d.op        = ara_pkg::VCPOP;
+                      end
+                      default: illegal_insn = 1'b1;
+                    endcase
+                  end
                   6'b011000: begin
                     ara_req_d.op        = ara_pkg::VMANDNOT;
                     ara_req_d.use_vd_op = 1'b1;
