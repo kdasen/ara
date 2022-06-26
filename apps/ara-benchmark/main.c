@@ -4,6 +4,8 @@
 #include <string.h>
 
 #include "printf.h"
+#include "runtime.h"
+
 
 #define N 258
 
@@ -116,9 +118,26 @@ int main() {
   // Compute
   int64_t scalar_sum, intrinsics_sum, assembly_sum;
   int32_t scalar_count, intrinsics_count, assembly_count;
+
+  // Reduce Scalar
+  printf("Reduction in scalar processor...\n");
+  start_timer();
   reduce_scalar(A, B, &scalar_sum, &scalar_count, N);
+  stop_timer();
+  // Scalar metrics Metrics
+  int64_t runtime = get_timer();
+  printf("The execution in the scalar processor took %d cycles.\n", runtime);
+
   reduce_intrinsics(A, B, &intrinsics_sum, &intrinsics_count, N);
+
+  // Reduce in Ara, written in assembly
+  printf("Reduction in Ara (assembly)...\n");
+  start_timer();
   reduce_assembly(A, B, &assembly_sum, &assembly_count, N);
+  stop_timer();
+  // Ara Metrics
+  runtime = get_timer();
+  printf("The execution in Ara (assembly) took %d cycles.\n", runtime);
 
   printf("Sums:\nScalar: %d\n Intrinsics: %d\nAssembly: %d\n", scalar_sum, intrinsics_sum, assembly_sum);
   printf("Counts:\nScalar: %d\n Intrinsics: %d\nAssembly: %d\n", scalar_count, intrinsics_count, assembly_count);
