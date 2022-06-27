@@ -140,7 +140,7 @@ int main() {
   printf("The execution in Ara (assembly) took %d cycles.\n\n", runtime);
 
   printf("Sums:\nScalar:     %d\nIntrinsics: %d\nAssembly:   %d\n\n", scalar_sum, intrinsics_sum, assembly_sum);
-  printf("Counts:\nScalar:     %d\n;Intrinsics: %d\nAssembly:   %d\n", scalar_count, intrinsics_count, assembly_count);
+  printf("Counts:\nScalar:     %d\nIntrinsics: %d\nAssembly:   %d\n", scalar_count, intrinsics_count, assembly_count);
 
   // compare
   if(scalar_sum == intrinsics_sum && scalar_count == intrinsics_count && scalar_sum == assembly_sum && scalar_count == assembly_count) {
