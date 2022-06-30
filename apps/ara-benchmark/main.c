@@ -7,7 +7,7 @@
 #include "runtime.h"
 
 
-#define N 400
+#define N 512
 
 int64_t A[N] __attribute__((aligned(32 * NR_LANES), section(".l2")));
 int64_t B[N] __attribute__((aligned(32 * NR_LANES), section(".l2")));
