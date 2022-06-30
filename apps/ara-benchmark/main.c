@@ -115,6 +115,8 @@ int main() {
   }
 #endif
 
+  printf("\nReduction benchmark for %d elements.\n\n", N);
+
   // Compute
   int64_t scalar_sum, intrinsics_sum, assembly_sum;
   int32_t scalar_count, intrinsics_count, assembly_count;
