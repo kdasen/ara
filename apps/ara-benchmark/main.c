@@ -7,7 +7,7 @@
 #include "runtime.h"
 
 
-#define N 50
+#define N 256
 
 int64_t A[N] __attribute__((aligned(32 * NR_LANES), section(".l2")));
 int64_t B[N] __attribute__((aligned(32 * NR_LANES), section(".l2")));
@@ -75,32 +75,32 @@ void reduce_assembly(int64_t *a, int64_t *b, int64_t *result_sum, int *result_co
   int temp;
   size_t vlmax, trash;
   // set vlmax and initialize variables
-  asm volatile("vsetvli %0, %1, e64, m1, ta, ma" : "=r"(vlmax) : "r"(n));
+  asm volatile("vsetvli %0, %1, e64, m4, ta, ma" : "=r"(vlmax) : "r"(n));
   // vec zero
-  asm volatile("vmv.v.i v30,  0");
+  asm volatile("vmv.v.i v28,  0");
   // vec s
-  asm volatile("vmv.v.i v5,  0");
+  asm volatile("vmv.v.i v4,  0");
 
   for (size_t vl; n > 0; n -= vl, a += vl, b += vl) {
-    asm volatile("vsetvli %0, %1, e64, m1, ta, ma" : "=r"(vl) : "r"(n));
+    asm volatile("vsetvli %0, %1, e64, m4, ta, ma" : "=r"(vl) : "r"(n));
 
     // vec a
-    asm volatile("vle64.v v10, (%0);" ::"r"(a));
+    asm volatile("vle64.v v8, (%0);" ::"r"(a));
     // vec b
-    asm volatile("vle64.v v11, (%0);" ::"r"(b));
+    asm volatile("vle64.v v12, (%0);" ::"r"(b));
 
     // mask
-    asm volatile("vmsne.vv v0, v10, v30");
+    asm volatile("vmsne.vv v0, v8, v28");
 
-    asm volatile("vmacc.vv v5, v10, v11, v0.t");
+    asm volatile("vmacc.vv v4, v8, v12, v0.t");
     asm volatile("vpopc.m %0, v0" :"=r"(temp):);
     count += temp;
   }
-  asm volatile("vsetvli %0, %1, e64, m1, ta, ma" : "=r"(trash) : "r"(vlmax));
-  asm volatile("vredsum.vs v30, v5, v30");
+  asm volatile("vsetvli %0, %1, e64, m4, ta, ma" : "=r"(trash) : "r"(vlmax));
+  asm volatile("vredsum.vs v28, v4, v28");
 
-  asm volatile("vsetvli %0, %1, e64, m1, ta, ma" : "=r"(temp) : "r"(1));
-  asm volatile("vse64.v v30, (%0);" ::"r"(result_sum));
+  asm volatile("vsetvli %0, %1, e64, m4, ta, ma" : "=r"(temp) : "r"(1));
+  asm volatile("vse64.v v28, (%0);" ::"r"(result_sum));
 
   *result_count = count;
 }
